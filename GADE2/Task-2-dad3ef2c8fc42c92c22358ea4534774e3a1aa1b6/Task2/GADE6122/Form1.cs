@@ -1,4 +1,4 @@
-using System; // Yunus Joosub & Thoriso Tlale
+﻿using System; // Yunus Joosub & Thoriso Tlale
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -366,7 +366,107 @@ namespace GADE6122
             }
 
         }
+        //Question 3.2.1
+        public abstract class Weapon : Item
+        {
+            public Weapon(int x, int y) : base(x, y)
+            {
 
+            }
+
+            protected int Damage;
+            public int GetDamage
+            {
+                get { return Damage; }
+            }
+            protected int Range; // overridden
+            public virtual int GetRange()
+            {
+                return Range;
+            }
+            protected int Durability;
+            public int GetDurability
+            {
+                get { return Durability; }
+            }
+            protected int Cost;
+            public int GetCost
+            {
+                get { return Cost; }
+            }
+            protected string WeaponType;
+            public string GetWeaponType
+            {
+                get { return WeaponType; }
+            }
+            protected string WeaponSymbol;
+            public string GetWeaponSymbol
+            {
+                get { return WeaponSymbol; }
+            }
+        }
+        //Question 3.2.2
+        public class MeleeWeapon : Weapon
+        {
+            public enum Types { Dagger, Longsword }
+            public Types meleeWeapons;
+            public override int GetRange()
+            {
+                return 1;
+            }
+            public MeleeWeapon(int x, int y, string weapon) : base(x, y)
+            {
+                switch (weapon)
+                {
+                    case "Dagger":
+                        this.Durability = 10;
+                        this.Damage = 3;
+                        this.Cost = 3;
+                        this.WeaponSymbol = "W";
+                        break;
+                    case "Longsword":
+                        this.Durability = 6;
+                        this.Damage = 4;
+                        this.Cost = 5;
+                        this.WeaponSymbol = "W";
+                        break;
+                }
+            }
+            public override string ToString()
+            {return " ";}
+        }
+        //Question 2.2.3
+        public class RangeWeapon : Weapon
+        {
+            public enum Types { Rifle, Longbow }
+            public Types RangeWeapons;
+            public override int GetRange()
+            {
+                return base.GetRange();               
+            }
+            public RangeWeapon(int x, int y, string weapon) : base(x, y)
+            {
+                switch (weapon)
+                {
+                    case "Rifle":
+                        this.Durability = 3;                                        
+                        this.Range = 3;
+                        this.Damage = 5;
+                        this.Cost = 7;
+                        this.WeaponSymbol = "R";
+                        break;
+                    case "Longbow":
+                        this.Durability = 4;
+                        this.Range = 2;
+                        this.Damage = 4;
+                        this.Cost = 6;
+                        this.WeaponSymbol = "R";
+                        break;
+                }
+            }
+            public override string ToString()
+            { return " "; }
+        }
         public class Map
         {
 
