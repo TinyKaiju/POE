@@ -231,7 +231,7 @@ namespace GADE6122
                 int possible = 4;
                 for (int i = 0; i < 4; i++)
                 {
-                    if (visionTiles[i] is not EmptyTile || (visionTiles[i] is not Gold))
+                    if (visionTiles[i] is not EmptyTile)
                     {
                         possible--;
                     }
@@ -245,7 +245,7 @@ namespace GADE6122
                 int direct = randNum.Next(4);
 
                 Tile temp = new Obstacle(0, 0);
-                while ((temp is not EmptyTile) || temp is not Gold)
+                while (temp is not EmptyTile)
                 {
                     switch (direct)
                     {
