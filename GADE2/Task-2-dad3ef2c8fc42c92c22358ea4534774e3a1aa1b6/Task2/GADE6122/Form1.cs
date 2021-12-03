@@ -348,7 +348,10 @@ namespace GADE6122
                 {
                     if (visionTiles[i] is not EmptyTile)
                     {
-                        possible--;
+                        if (visionTiles[i] is not Item)
+                        {
+                            possible--;
+                        }
                     }
                 }
 
@@ -360,7 +363,7 @@ namespace GADE6122
                 int direct = randNum.Next(4);
 
                 Tile temp = new Obstacle(0, 0);
-                while (temp is not EmptyTile)
+                while (!(temp is EmptyTile) || (temp is Item))
                 {
                     switch (direct)
                     {
@@ -505,6 +508,11 @@ namespace GADE6122
             {
                 get { return WeaponSymbol; }
             }
+            protected string WeaponName;
+            public string GetWeaponName
+            {
+                get { return WeaponName; }
+            }
             public override string ToString()
             {
                 return "";
@@ -527,19 +535,23 @@ namespace GADE6122
                         this.Durability = 10;
                         this.Damage = 3;
                         this.Cost = 3;
-                        this.WeaponSymbol = "Dagger";
+                        this.WeaponSymbol = "D";
+                        this.WeaponName = "Dagger";
+
                         break;
                     case Types.Longsword:
                         this.Durability = 6;
                         this.Damage = 4;
                         this.Cost = 5;
-                        this.WeaponSymbol = "Longsword";                      
+                        this.WeaponSymbol = "S";
+                        this.WeaponName = "Longsword";
                         break;
                 }
 
             }
             public override string ToString()
-            { return WeaponSymbol; }
+            { return WeaponName; }
+          
         }
         //Question 2.2.3
         public class RangeWeapon : Weapon
@@ -560,19 +572,21 @@ namespace GADE6122
                         this.Range = 3;
                         this.Damage = 5;
                         this.Cost = 7;
-                        this.WeaponSymbol = "Rifle";
+                        this.WeaponSymbol = "R";
+                        this.WeaponName = "Rifle";
                         break;
                     case Types.Longbow:
                         this.Durability = 4;
                         this.Range = 2;
                         this.Damage = 4;
                         this.Cost = 6;
-                        this.WeaponSymbol = "Longbow";
+                        this.WeaponSymbol = "B";
+                        this.WeaponName = "Longbow";
                         break;
                 }
             }
             public override string ToString()
-            { return WeaponSymbol; }
+            { return WeaponName; }
         }
         public class Map
         {
@@ -1024,11 +1038,13 @@ namespace GADE6122
                         {
                             if (map.getMapTiles(x, y) is MeleeWeapon)
                             {
-                                output += 'W';
+                                MeleeWeapon temp = (MeleeWeapon)map.getMapTiles(x, y);
+                                output += temp.GetWeaponSymbol;
                             }
                             else
                             {
-                                output += 'R';
+                                RangeWeapon temp = (RangeWeapon)map.getMapTiles(x, y);
+                                output += temp.GetWeaponSymbol;
                             }                           
                         }
                         if (map.getMapTiles(x, y) is Character)
