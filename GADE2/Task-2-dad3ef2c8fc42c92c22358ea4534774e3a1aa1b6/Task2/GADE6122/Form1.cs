@@ -217,10 +217,10 @@ namespace GADE6122
                 this.damage = this.currentWeapon.GetDamage;
             }
 
-            protected void Loot(Character target)
+            public void Loot(Character target)
             {
                 this.goldpurse += target.getGold();
-                if (target.currentWeapon != null)
+                if ((target.currentWeapon != null))
                 {
                     this.Pickup(target.currentWeapon);
                 }
@@ -331,7 +331,6 @@ namespace GADE6122
             {
                 return "Mage at [" + x + "," + y + "] (" + damage + ")"; // double check 
             }
-
         }
 
         public class Leader : Enemy
@@ -340,7 +339,7 @@ namespace GADE6122
             public Leader(int x, int y) : base(x, y, 2, 20, 'L')//Constructor
             {
                 this.visionTiles = new Tile[4];
-                this.currentWeapon = new MeleeWeapon(x, y, MeleeWeapon.Types.Dagger);
+                this.currentWeapon = new MeleeWeapon(x, y, MeleeWeapon.Types.Longsword);
             }
             public override movementEnum ReturnMove(movementEnum move) // Change to new Method
             {
@@ -776,6 +775,7 @@ namespace GADE6122
                     }
                     else
                     {
+                        player.Loot(target);
                         int x = target.getX();
                         int y = target.getY();
                         String output = "Killed " + target.ToString();
@@ -804,7 +804,11 @@ namespace GADE6122
                         {
                             Tile temp = attacker.getVisionTile(i);
                             Enemy victim = (Enemy)mapTiles[temp.getX(), temp.getY()];
-
+                            victim.damaged(attacker.getDamage());
+                            if (victim.isDead())
+                            {
+                               // removeEnemy(victim);
+                            }
                         }
                         else if (attacker.getVisionTile(i) is Hero)
                         {
