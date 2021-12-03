@@ -216,6 +216,15 @@ namespace GADE6122
                 this.reach = this.currentWeapon.GetRange();
                 this.damage = this.currentWeapon.GetDamage;
             }
+
+            protected void Loot(Character target)
+            {
+                this.goldpurse += target.getGold();
+                if (target.currentWeapon != null)
+                {
+                    this.Pickup(target.currentWeapon);
+                }
+            }
         }
 
         //Question 2.4
