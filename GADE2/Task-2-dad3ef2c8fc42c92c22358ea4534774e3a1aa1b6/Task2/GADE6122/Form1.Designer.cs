@@ -49,7 +49,7 @@ namespace GADE6122
             // 
             // button1
             // 
-            this.button1.Location = new System.Drawing.Point(123, 546);
+            this.button1.Location = new System.Drawing.Point(21, 546);
             this.button1.Name = "button1";
             this.button1.Size = new System.Drawing.Size(75, 23);
             this.button1.TabIndex = 0;
@@ -69,11 +69,12 @@ namespace GADE6122
             // 
             this.MemoPlayerInfo.BackColor = System.Drawing.Color.IndianRed;
             this.MemoPlayerInfo.BorderStyle = System.Windows.Forms.BorderStyle.None;
-            this.MemoPlayerInfo.Location = new System.Drawing.Point(443, 36);
+            this.MemoPlayerInfo.Location = new System.Drawing.Point(443, 12);
             this.MemoPlayerInfo.Name = "MemoPlayerInfo";
-            this.MemoPlayerInfo.Size = new System.Drawing.Size(331, 90);
+            this.MemoPlayerInfo.Size = new System.Drawing.Size(268, 172);
             this.MemoPlayerInfo.TabIndex = 2;
             this.MemoPlayerInfo.Text = "";
+            this.MemoPlayerInfo.TextChanged += new System.EventHandler(this.MemoPlayerInfo_TextChanged);
             // 
             // panel1
             // 
@@ -84,9 +85,9 @@ namespace GADE6122
             this.panel1.Controls.Add(this.MemoEnemyInfo);
             this.panel1.Controls.Add(this.CmbEnemyList);
             this.panel1.Controls.Add(this.label2);
-            this.panel1.Location = new System.Drawing.Point(443, 141);
+            this.panel1.Location = new System.Drawing.Point(443, 200);
             this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(331, 311);
+            this.panel1.Size = new System.Drawing.Size(268, 412);
             this.panel1.TabIndex = 3;
             // 
             // richTextBox1
@@ -95,7 +96,7 @@ namespace GADE6122
             this.richTextBox1.BorderStyle = System.Windows.Forms.BorderStyle.None;
             this.richTextBox1.Location = new System.Drawing.Point(13, 209);
             this.richTextBox1.Name = "richTextBox1";
-            this.richTextBox1.Size = new System.Drawing.Size(302, 82);
+            this.richTextBox1.Size = new System.Drawing.Size(239, 185);
             this.richTextBox1.TabIndex = 6;
             this.richTextBox1.Text = "";
             // 
@@ -106,7 +107,7 @@ namespace GADE6122
             this.BtnAttack.Font = new System.Drawing.Font("Segoe UI", 11.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
             this.BtnAttack.Location = new System.Drawing.Point(13, 173);
             this.BtnAttack.Name = "BtnAttack";
-            this.BtnAttack.Size = new System.Drawing.Size(302, 29);
+            this.BtnAttack.Size = new System.Drawing.Size(239, 29);
             this.BtnAttack.TabIndex = 5;
             this.BtnAttack.Text = "Attack";
             this.BtnAttack.UseVisualStyleBackColor = false;
@@ -119,7 +120,7 @@ namespace GADE6122
             this.MemoEnemyInfo.Location = new System.Drawing.Point(13, 61);
             this.MemoEnemyInfo.Name = "MemoEnemyInfo";
             this.MemoEnemyInfo.ScrollBars = System.Windows.Forms.RichTextBoxScrollBars.None;
-            this.MemoEnemyInfo.Size = new System.Drawing.Size(302, 105);
+            this.MemoEnemyInfo.Size = new System.Drawing.Size(239, 105);
             this.MemoEnemyInfo.TabIndex = 4;
             this.MemoEnemyInfo.Text = "";
             // 
@@ -128,7 +129,7 @@ namespace GADE6122
             this.CmbEnemyList.FormattingEnabled = true;
             this.CmbEnemyList.Location = new System.Drawing.Point(13, 32);
             this.CmbEnemyList.Name = "CmbEnemyList";
-            this.CmbEnemyList.Size = new System.Drawing.Size(302, 23);
+            this.CmbEnemyList.Size = new System.Drawing.Size(239, 23);
             this.CmbEnemyList.TabIndex = 1;
             this.CmbEnemyList.SelectedIndexChanged += new System.EventHandler(this.CmbEnemyList_SelectedIndexChanged);
             // 
@@ -148,7 +149,7 @@ namespace GADE6122
             this.btnUp.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Center;
             this.btnUp.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
             this.btnUp.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
-            this.btnUp.Location = new System.Drawing.Point(561, 463);
+            this.btnUp.Location = new System.Drawing.Point(243, 490);
             this.btnUp.Name = "btnUp";
             this.btnUp.Size = new System.Drawing.Size(76, 50);
             this.btnUp.TabIndex = 4;
@@ -162,7 +163,7 @@ namespace GADE6122
             this.btnDown.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Center;
             this.btnDown.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
             this.btnDown.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
-            this.btnDown.Location = new System.Drawing.Point(561, 519);
+            this.btnDown.Location = new System.Drawing.Point(243, 546);
             this.btnDown.Name = "btnDown";
             this.btnDown.Size = new System.Drawing.Size(76, 50);
             this.btnDown.TabIndex = 5;
@@ -176,7 +177,7 @@ namespace GADE6122
             this.btnLeft.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Center;
             this.btnLeft.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
             this.btnLeft.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
-            this.btnLeft.Location = new System.Drawing.Point(479, 490);
+            this.btnLeft.Location = new System.Drawing.Point(161, 517);
             this.btnLeft.Name = "btnLeft";
             this.btnLeft.Size = new System.Drawing.Size(76, 50);
             this.btnLeft.TabIndex = 6;
@@ -192,7 +193,7 @@ namespace GADE6122
             this.btnRight.FlatAppearance.BorderSize = 0;
             this.btnRight.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
             this.btnRight.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
-            this.btnRight.Location = new System.Drawing.Point(643, 490);
+            this.btnRight.Location = new System.Drawing.Point(325, 517);
             this.btnRight.Name = "btnRight";
             this.btnRight.Size = new System.Drawing.Size(76, 50);
             this.btnRight.TabIndex = 7;
@@ -205,16 +206,17 @@ namespace GADE6122
             this.rtbMap.BackColor = System.Drawing.Color.GhostWhite;
             this.rtbMap.BorderStyle = System.Windows.Forms.BorderStyle.None;
             this.rtbMap.Font = new System.Drawing.Font("Courier New", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            this.rtbMap.Location = new System.Drawing.Point(21, 36);
+            this.rtbMap.Location = new System.Drawing.Point(21, 12);
             this.rtbMap.Name = "rtbMap";
             this.rtbMap.ScrollBars = System.Windows.Forms.RichTextBoxScrollBars.None;
-            this.rtbMap.Size = new System.Drawing.Size(406, 416);
+            this.rtbMap.Size = new System.Drawing.Size(406, 440);
             this.rtbMap.TabIndex = 8;
             this.rtbMap.Text = "";
+            this.rtbMap.TextChanged += new System.EventHandler(this.rtbMap_TextChanged);
             // 
             // button2
             // 
-            this.button2.Location = new System.Drawing.Point(21, 546);
+            this.button2.Location = new System.Drawing.Point(21, 589);
             this.button2.Name = "button2";
             this.button2.Size = new System.Drawing.Size(75, 23);
             this.button2.TabIndex = 9;
@@ -226,7 +228,7 @@ namespace GADE6122
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(787, 581);
+            this.ClientSize = new System.Drawing.Size(1070, 624);
             this.Controls.Add(this.button2);
             this.Controls.Add(this.rtbMap);
             this.Controls.Add(this.btnRight);

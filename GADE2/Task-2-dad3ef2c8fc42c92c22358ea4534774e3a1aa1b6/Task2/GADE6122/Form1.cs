@@ -214,6 +214,7 @@ namespace GADE6122
             protected void updateReach()
             {
                 this.reach = this.currentWeapon.GetRange();
+                this.damage = this.currentWeapon.GetDamage;
             }
         }
 
@@ -402,7 +403,14 @@ namespace GADE6122
             }
             public override string ToString()
             {
-                return ("Player Stats:\n HP: " + hp + "/" + maxHp + "\n Damage: " + damage + "\n Gold: " + goldpurse + "\n [" + getX() + "," + getY() + "]");
+                string weapon;
+                if (currentWeapon == null)
+                {
+                    return ("Player Stats:\n |HP: " + hp + "/" + maxHp + "\n |Current Weapon: Bare Hands \n |Weapon Range: 1" + "\n |Weapon Damage: " + damage + "\n |Gold: " + goldpurse + "\n [" + getX() + "," + getY() + "]");
+
+                }
+                weapon = currentWeapon.ToString();
+                return ("Player Stats:\n |HP: " + hp + "/" + maxHp + "\n |Current Weapon: " + weapon + "\n |Weapon Range: " + Convert.ToString(currentWeapon.GetRange())+ "\n |Weapon Damage: " + damage + "\n |Gold: " + goldpurse + "\n [" + getX() + "," + getY() + "]");
             }
 
             public override bool CheckRange(Character target)
@@ -489,12 +497,16 @@ namespace GADE6122
             {
                 get { return WeaponSymbol; }
             }
+            public override string ToString()
+            {
+                return "";
+            }
         }
         //Question 3.2.2
         public class MeleeWeapon : Weapon
         {
             public enum Types { Dagger, Longsword }
-            public Types meleeWeapons;
+            public Types meleeWeapons;            
             public override int GetRange()
             {
                 return 1;
@@ -507,18 +519,19 @@ namespace GADE6122
                         this.Durability = 10;
                         this.Damage = 3;
                         this.Cost = 3;
-                        this.WeaponSymbol = "W";
+                        this.WeaponSymbol = "Dagger";
                         break;
                     case Types.Longsword:
                         this.Durability = 6;
                         this.Damage = 4;
                         this.Cost = 5;
-                        this.WeaponSymbol = "W";
+                        this.WeaponSymbol = "Longsword";                      
                         break;
                 }
+
             }
             public override string ToString()
-            { return " "; }
+            { return WeaponSymbol; }
         }
         //Question 2.2.3
         public class RangeWeapon : Weapon
@@ -531,6 +544,7 @@ namespace GADE6122
             }
             public RangeWeapon(int x, int y, Types weapon) : base(x, y)
             {
+                
                 switch (weapon)
                 {
                     case Types.Rifle:
@@ -538,19 +552,19 @@ namespace GADE6122
                         this.Range = 3;
                         this.Damage = 5;
                         this.Cost = 7;
-                        this.WeaponSymbol = "R";
+                        this.WeaponSymbol = "Rifle";
                         break;
                     case Types.Longbow:
                         this.Durability = 4;
                         this.Range = 2;
                         this.Damage = 4;
                         this.Cost = 6;
-                        this.WeaponSymbol = "R";
+                        this.WeaponSymbol = "Longbow";
                         break;
                 }
             }
             public override string ToString()
-            { return " "; }
+            { return WeaponSymbol; }
         }
         public class Map
         {
@@ -714,9 +728,11 @@ namespace GADE6122
                 int oldX = getPlayerX();
                 int oldY = getPlayerY();
                 player.Move(move);
-
+                
                 mapTiles[oldX, oldY] = new EmptyTile(oldX, oldY);
                 mapTiles[getPlayerX(), getPlayerY()] = player;
+
+
 
                 UpdateVision();
             }
@@ -1184,6 +1200,7 @@ namespace GADE6122
             else
             {
                 lblOutput.Text = "No Targets Available";
+                richTextBox1.Text += "No Targets Available\n";
             }
         }
 
@@ -1207,6 +1224,21 @@ namespace GADE6122
         {
             //SaveLoad saver = new SaveLoad();
             //saver.Save(game.getMap());
+        }
+
+        private void MemoPlayerInfo_TextChanged(object sender, EventArgs e)
+        {
+            
+        }
+
+        private void richTextBox1_TextChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void rtbMap_TextChanged(object sender, EventArgs e)
+        {
+            
         }
     }
 }
