@@ -222,7 +222,14 @@ namespace GADE6122
                 this.goldpurse += target.getGold();
                 if ((target.currentWeapon != null))
                 {
-                    this.Pickup(target.currentWeapon);
+                    string swap = "Swap " + this.currentWeapon.ToString() + " for enemy's " + target.currentWeapon.ToString();
+                    var flag = MessageBox.Show(swap, "Switch Weapons?", MessageBoxButtons.YesNo);
+                   
+                    if (flag == DialogResult.Yes)
+                    {
+                        this.Pickup(target.currentWeapon);
+                    }
+
                 }
             }
         }
@@ -257,6 +264,7 @@ namespace GADE6122
             {
                 this.visionTiles = new Tile[4];
                 this.currentWeapon = new MeleeWeapon(x, y, MeleeWeapon.Types.Dagger);
+                this.goldpurse = 1;
             }
             public override movementEnum ReturnMove(movementEnum move)
             {
@@ -315,6 +323,7 @@ namespace GADE6122
                 this.visionTiles = new Tile[8];
                 friendlyFire = true;
                 this.cornerVision = true;
+                this.goldpurse = 4;
             }
 
             public override movementEnum ReturnMove(movementEnum move)
@@ -340,6 +349,7 @@ namespace GADE6122
             {
                 this.visionTiles = new Tile[4];
                 this.currentWeapon = new MeleeWeapon(x, y, MeleeWeapon.Types.Longsword);
+                this.goldpurse = 2;
             }
             public override movementEnum ReturnMove(movementEnum move) // Change to new Method
             {
@@ -432,6 +442,15 @@ namespace GADE6122
             public override void Attack(Character target)
             {
                 target.damaged(this.damage);
+            }
+
+            public string getCurrentWeapon()
+            {
+                if (currentWeapon == null)
+                {
+                    return "Bare Hands";
+                }
+                return this.currentWeapon.ToString();
             }
         }
 
@@ -746,6 +765,17 @@ namespace GADE6122
             }
             public void Move(Character.movementEnum move, Item pick)
             {
+                if (pick is Weapon)
+                {
+
+                    string swap = "Swap " + player.getCurrentWeapon() + " for " + pick.ToString();
+                    var flag = MessageBox.Show(swap, "Switch Weapons?", MessageBoxButtons.YesNo);
+
+                    if (flag == DialogResult.Yes)
+                    {
+                        player.Pickup(pick);
+                    }
+                }
                 player.Pickup(pick);
                 int oldX = getPlayerX();
                 int oldY = getPlayerY();
