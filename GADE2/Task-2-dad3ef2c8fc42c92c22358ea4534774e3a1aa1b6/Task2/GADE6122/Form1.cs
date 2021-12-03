@@ -64,8 +64,9 @@ namespace GADE6122
             public enum movementEnum { None, Up, Down, Left, Right };
 
             private char symbol;
-
-            protected int goldpurse;
+            protected Weapon currentWeapon;
+            protected int goldpurse = 0;
+            protected int reach = 1;
             //Get methods
             public int getHp()
             {
@@ -83,6 +84,11 @@ namespace GADE6122
             public char getSymbol()
             {
                 return symbol;
+            }
+
+            public int getGold()
+            {
+                return this.goldpurse;
             }
 
             public Character(int a, int b, char symbol) : base(a, b) // constructor
@@ -105,7 +111,7 @@ namespace GADE6122
             }
             public virtual bool CheckRange(Character target)
             {
-                if ((DistanceTo(target)) == 1)
+                if ((DistanceTo(target)) <= this.reach)
                 {
                     return true;
                 }
@@ -176,7 +182,7 @@ namespace GADE6122
             }
             public void Pickup(Item i)
             {
-                
+
                 if (i is Gold)
                 {
                     Gold goldnum;
@@ -184,7 +190,12 @@ namespace GADE6122
                     goldpurse += goldnum.getGoldAmount();
                 }
 
-                
+                if (i is Weapon)
+                {
+                    this.currentWeapon = (Weapon)i;
+                    updateReach();
+                }
+
             }
             public Tile getVisionTile(int i)
             {
@@ -193,6 +204,16 @@ namespace GADE6122
             public void damaged(int dmg)
             {
                 this.hp -= dmg;
+            }
+
+            public void spendGold(int cost)
+            {
+                this.goldpurse -= cost;
+            }
+
+            protected void updateReach()
+            {
+                this.reach = this.currentWeapon.GetRange();
             }
         }
 
@@ -225,6 +246,7 @@ namespace GADE6122
             public Goblin(int x, int y) : base(x, y, 1, 10, 'G')//Constructor
             {
                 this.visionTiles = new Tile[4];
+                this.currentWeapon = new MeleeWeapon(x, y, MeleeWeapon.Types.Dagger);
             }
             public override movementEnum ReturnMove(movementEnum move)
             {
@@ -301,6 +323,69 @@ namespace GADE6122
             }
 
         }
+
+        public class Leader : Enemy
+        {
+            private Tile targetTile = new EmptyTile(0, 0);
+            public Leader(int x, int y) : base(x, y, 2, 20, 'L')//Constructor
+            {
+                this.visionTiles = new Tile[4];
+                this.currentWeapon = new MeleeWeapon(x, y, MeleeWeapon.Types.Dagger);
+            }
+            public override movementEnum ReturnMove(movementEnum move) // Change to new Method
+            {
+                int possible = 4;
+                for (int i = 0; i < 4; i++)
+                {
+                    if (visionTiles[i] is not EmptyTile)
+                    {
+                        possible--;
+                    }
+                }
+
+                if (possible == 0)
+                {
+                    return movementEnum.None;
+                }
+                move = movementEnum.Up;
+                int direct = randNum.Next(4);
+
+                Tile temp = new Obstacle(0, 0);
+                while (temp is not EmptyTile)
+                {
+                    switch (direct)
+                    {
+                        case 0:
+                            temp = visionTiles[0];
+                            move = movementEnum.Up;
+                            break;
+                        case 1:
+                            temp = visionTiles[1];
+                            move = movementEnum.Down;
+                            break;
+                        case 2:
+                            temp = visionTiles[2];
+                            move = movementEnum.Right;
+                            break;
+                        case 3:
+                            temp = visionTiles[3];
+                            move = movementEnum.Left;
+                            break;
+                        default:
+                            direct = randNum.Next(4);
+                            break;
+                    }
+                    direct = randNum.Next(4);
+
+                }
+                return move;
+            }
+            public override string ToString()
+            {
+                return "Leader at [" + x + "," + y + "] (" + damage + ")"; // double check 
+            }
+        }
+
         public class Hero : Character
         {
             public Hero(int x, int y, int hp) : base(x, y, 'H')//Constructor
@@ -414,17 +499,17 @@ namespace GADE6122
             {
                 return 1;
             }
-            public MeleeWeapon(int x, int y, string weapon) : base(x, y)
+            public MeleeWeapon(int x, int y, Types weapon) : base(x, y)
             {
                 switch (weapon)
                 {
-                    case "Dagger":
+                    case Types.Dagger:
                         this.Durability = 10;
                         this.Damage = 3;
                         this.Cost = 3;
                         this.WeaponSymbol = "W";
                         break;
-                    case "Longsword":
+                    case Types.Longsword:
                         this.Durability = 6;
                         this.Damage = 4;
                         this.Cost = 5;
@@ -433,7 +518,7 @@ namespace GADE6122
                 }
             }
             public override string ToString()
-            {return " ";}
+            { return " "; }
         }
         //Question 2.2.3
         public class RangeWeapon : Weapon
@@ -442,20 +527,20 @@ namespace GADE6122
             public Types RangeWeapons;
             public override int GetRange()
             {
-                return base.GetRange();               
+                return base.GetRange();
             }
-            public RangeWeapon(int x, int y, string weapon) : base(x, y)
+            public RangeWeapon(int x, int y, Types weapon) : base(x, y)
             {
                 switch (weapon)
                 {
-                    case "Rifle":
-                        this.Durability = 3;                                        
+                    case Types.Rifle:
+                        this.Durability = 3;
                         this.Range = 3;
                         this.Damage = 5;
                         this.Cost = 7;
                         this.WeaponSymbol = "R";
                         break;
-                    case "Longbow":
+                    case Types.Longbow:
                         this.Durability = 4;
                         this.Range = 2;
                         this.Damage = 4;
@@ -476,8 +561,8 @@ namespace GADE6122
             private int mapWidth;
             private int mapHeight;
             private Random randomNum = new Random();
-            //private int gold;
-            //private Gold[] goldArray;
+            private int gold;
+            private Gold[] goldArray;
             private Item[] Items;
             public Map(int wMin, int wMax, int hMin, int hMax, int enemyNum, int goldNum)
             {
@@ -676,7 +761,7 @@ namespace GADE6122
                         {
                             Tile temp = attacker.getVisionTile(i);
                             Enemy victim = (Enemy)mapTiles[temp.getX(), temp.getY()];
-                            
+
                         }
                         else if (attacker.getVisionTile(i) is Hero)
                         {
@@ -754,6 +839,52 @@ namespace GADE6122
         }
 
         //Question 3.3
+        public class Shop
+        {
+            private Weapon[] weaponArray = new Weapon[3];
+            private Random randomNum = new Random();
+            private Character buyer;
+
+            public Shop(Character buyer)
+            {
+                this.buyer = buyer;
+                for (int i = 0; i < weaponArray.Length; i++)
+                {
+                    weaponArray[i] = RandomWeapon();
+                }
+            }
+            private Weapon RandomWeapon()
+            {
+                int randomNumber = randomNum.Next(weaponArray.Length);
+
+                switch (randomNumber)
+                {
+                    case 0: return new MeleeWeapon(0, 0, MeleeWeapon.Types.Dagger);
+                    case 1: return new MeleeWeapon(0, 0, MeleeWeapon.Types.Longsword);
+                    case 2: return new RangeWeapon(0, 0, RangeWeapon.Types.Rifle);
+                    case 3: return new RangeWeapon(0, 0, RangeWeapon.Types.Longbow);
+                    default: return new MeleeWeapon(0, 0, MeleeWeapon.Types.Dagger);
+                }
+
+            }
+
+            private bool CanBuy(int num)
+            {
+                if (buyer.getGold() >= num)
+                {
+                    return true;
+                }
+                else
+                    return false;
+            }
+
+            public void Buy(int num)
+            {
+                buyer.spendGold(weaponArray[num].GetCost);
+                buyer.Pickup(weaponArray[num]);
+                weaponArray[num] = RandomWeapon();
+            }
+        }
         public class GameEngine
         {
             private const char emptyChar = ' ';
@@ -800,7 +931,7 @@ namespace GADE6122
                     {
                         map.Move(moveType);
                     }
-                    
+
                     moveEnemy();
                     map.tryEnemyAttack();
                     return true;
