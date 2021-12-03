@@ -187,13 +187,13 @@ namespace GADE6122
                 {
                     Gold goldnum;
                     goldnum = (Gold)i;
-                    goldpurse += goldnum.getGoldAmount();
+                    this.goldpurse += goldnum.getGoldAmount();
                 }
 
                 if (i is Weapon)
                 {
                     this.currentWeapon = (Weapon)i;
-                    updateReach();
+                    this.updateReach();
                 }
 
             }
@@ -222,7 +222,16 @@ namespace GADE6122
                 this.goldpurse += target.getGold();
                 if ((target.currentWeapon != null))
                 {
-                    string swap = "Swap " + this.currentWeapon.ToString() + " for enemy's " + target.currentWeapon.ToString();
+                    string swap;
+                    if (this.currentWeapon == null)
+                    {
+                        swap = "Swap Bare Hands for enemy's " + target.currentWeapon.ToString();
+                    }
+                    else
+                    {
+                        swap = "Swap " + this.currentWeapon.ToString() + " for enemy's " + target.currentWeapon.ToString();
+                    }
+   
                     var flag = MessageBox.Show(swap, "Switch Weapons?", MessageBoxButtons.YesNo);
                    
                     if (flag == DialogResult.Yes)
@@ -273,11 +282,18 @@ namespace GADE6122
                 {
                     if (visionTiles[i] is not EmptyTile)
                     {
-                        possible--;
+                        if(visionTiles[i] is not Item)
+                        {
+                            possible--;
+                        }
+                        if(visionTiles[i] is Hero)
+                        {
+                            possible = 0;
+                        }
                     }
                 }
 
-                if (possible == 0)
+                if (possible <= 0)
                 {
                     return movementEnum.None;
                 }
@@ -285,7 +301,7 @@ namespace GADE6122
                 int direct = randNum.Next(4);
 
                 Tile temp = new Obstacle(0, 0);
-                while (temp is not EmptyTile)
+                while (!((temp is EmptyTile) || (temp is Item)))
                 {
                     switch (direct)
                     {
@@ -362,10 +378,14 @@ namespace GADE6122
                         {
                             possible--;
                         }
+                        if (visionTiles[i] is Hero)
+                        {
+                            possible = 0;
+                        }
                     }
                 }
 
-                if (possible == 0)
+                if (possible <= 0)
                 {
                     return movementEnum.None;
                 }
@@ -373,7 +393,7 @@ namespace GADE6122
                 int direct = randNum.Next(4);
 
                 Tile temp = new Obstacle(0, 0);
-                while (!(temp is EmptyTile) || (temp is Item))
+                while (!((temp is EmptyTile) || (temp is Item)))
                 {
                     switch (direct)
                     {
@@ -908,7 +928,10 @@ namespace GADE6122
                     int oldX = enemies[i].getX();
                     int oldY = enemies[i].getY();
                     enemies[i].Move(enemies[i].ReturnMove(0));
-
+                    if(getItemAtPosition(enemies[i].getX(), enemies[i].getY()) != null)
+                    {
+                        enemies[i].Pickup(getItemAtPosition(enemies[i].getX(), enemies[i].getY()));
+                    }
                     mapTiles[oldX, oldY] = new EmptyTile(oldX, oldY);
                     mapTiles[enemies[i].getX(), enemies[i].getY()] = enemies[i];
                     UpdateVision();
