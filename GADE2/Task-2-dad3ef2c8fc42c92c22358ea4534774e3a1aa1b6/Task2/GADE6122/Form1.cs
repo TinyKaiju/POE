@@ -564,9 +564,11 @@ namespace GADE6122
             private int gold;
             private Gold[] goldArray;
             private Item[] Items;
-            public Map(int wMin, int wMax, int hMin, int hMax, int enemyNum, int goldNum)
-            {
 
+            
+            public Map(int wMin, int wMax, int hMin, int hMax, int enemyNum, int goldNum, int weaponNum)
+            {
+                Items = new Item[weaponNum + goldNum]; 
 
                 mapWidth = randomNum.Next(wMin, wMax) + 2;
                 mapHeight = randomNum.Next(hMin, hMax) + 2;
@@ -584,16 +586,18 @@ namespace GADE6122
                     enemies[i] = (Enemy)Create(Tile.tiletype.Enemy);
                     mapTiles[enemies[i].getX(), enemies[i].getY()] = enemies[i];
                 }
-
-
-                Items = new Gold[goldNum];
+                
                 for (int i = 0; i < goldNum; i++)
                 {
                     Items[i] = (Gold)Create(Tile.tiletype.Gold);
                     mapTiles[Items[i].getX(), Items[i].getY()] = Items[i];
                 }
 
-
+                for (int i = goldNum; i < (weaponNum + goldNum); i++)
+                {
+                    Items[i] = (Weapon)Create(Tile.tiletype.Weapon);
+                    mapTiles[Items[i].getX(), Items[i].getY()] = Items[i];
+                }
                 UpdateVision();
 
             }
@@ -623,17 +627,31 @@ namespace GADE6122
                     case Tile.tiletype.Hero:
                         return new Hero(uniqueX, uniqueY, 50);
                     case Tile.tiletype.Enemy:
-                        int rand = randomNum.Next(2);
+                        int rand = randomNum.Next(3);
                         switch (rand) // Randomise enemy type
                         {
                             case 0: return new Goblin(uniqueX, uniqueY);
                             case 1: return new Mage(uniqueX, uniqueY);
+                            case 2: return new Leader(uniqueX, uniqueY);
                             default: return new EmptyTile(uniqueX, uniqueY);
                         }
                     case Tile.tiletype.Gold:
                         return new Gold(uniqueX, uniqueY);
+                    case Tile.tiletype.Weapon:
+                        int randW = randomNum.Next(4);
+                        switch (randW) // Randomise enemy type
+                        {
+                            case 0: return new MeleeWeapon(uniqueX, uniqueY,MeleeWeapon.Types.Dagger);
+                            case 1: return new MeleeWeapon(uniqueX, uniqueY, MeleeWeapon.Types.Longsword);
+                            case 2: return new RangeWeapon(uniqueX, uniqueY, RangeWeapon.Types.Rifle);
+                            case 3: return new RangeWeapon(uniqueX, uniqueY, RangeWeapon.Types.Longbow);
+                            default: return new EmptyTile(uniqueX, uniqueY);
+                        }
                     default: return new EmptyTile(uniqueX, uniqueY);
+                        
                 }
+                
+
             }
 
             public void fillMap()
@@ -890,11 +908,13 @@ namespace GADE6122
             private const char emptyChar = ' ';
             private const char obstacleChar = 'X';
             private const char goldchar = '$';
+            private const char meleechar = 'W';
+            private const char rangechar = 'R';
             private Map map;
 
-            public GameEngine(int widthMin, int widthMax, int heightMin, int heightMax, int enemyNum, int goldNum) // constructor
+            public GameEngine(int widthMin, int widthMax, int heightMin, int heightMax, int enemyNum, int goldNum, int weaponNum) // constructor
             {
-                map = new Map(widthMin, widthMax, heightMin, heightMax, enemyNum, goldNum);
+                map = new Map(widthMin, widthMax, heightMin, heightMax, enemyNum, goldNum, weaponNum);
             }
 
             public bool MovePlayer(Character.movementEnum moveType)
@@ -970,6 +990,17 @@ namespace GADE6122
                         if (map.getMapTiles(x, y) is Gold)
                         {
                             output += '$';
+                        }
+                        if (map.getMapTiles(x, y) is Weapon)
+                        {
+                            if (map.getMapTiles(x, y) is MeleeWeapon)
+                            {
+                                output += 'W';
+                            }
+                            else
+                            {
+                                output += 'R';
+                            }                           
                         }
                         if (map.getMapTiles(x, y) is Character)
                         {
@@ -1060,7 +1091,7 @@ namespace GADE6122
         public Form1()
         {
             InitializeComponent();
-            game = new GameEngine(10, 20, 10, 20, 5, 3);
+            game = new GameEngine(10, 20, 10, 20, 5, 5, 5);
             updateForm();
         }
 
