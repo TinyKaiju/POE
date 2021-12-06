@@ -417,6 +417,101 @@ namespace GADE6122
                     distX = targetTile.getX() - x;
                 }
 
+                if (distY == distX)
+                {
+                    Random rand = new Random();
+                    int num = rand.Next(2);
+                    for (int i = 0; i < 2; i++)
+                    {
+                        switch (num)
+                        {
+                            case 0:
+                                if (targetTile.getX() == x)
+                                {
+                                    if (targetTile.getY() > y)
+                                    {
+                                        m = 3;
+                                        move = movementEnum.Left;
+                                    }
+                                    else
+                                    {
+                                        m = 2;
+                                        move = movementEnum.Right;
+                                    }
+                                }
+                                else if (targetTile.getX() < x)
+                                {
+                                    m = 0;
+                                    move = movementEnum.Up;
+                                }
+                                else if (targetTile.getX() > x)
+                                {
+                                    m = 1;
+                                    move = movementEnum.Down;
+                                }
+                                else if (targetTile.getY() < y)
+                                {
+                                    m = 3;
+                                    move = movementEnum.Left;
+                                }
+                                else
+                                {
+                                    m = 2;
+                                    move = movementEnum.Right;
+                                }
+                                break;
+
+                            case 1:
+                                if (targetTile.getY() == y)
+                                {
+                                    if (targetTile.getX() < x)
+                                    {
+                                        m = 0;
+                                        move = movementEnum.Up;
+                                    }
+                                    else
+                                    {
+                                        m = 1;
+                                        move = movementEnum.Down;
+                                    }
+                                }
+                                else if (targetTile.getY() < y)
+                                {
+                                    m = 3;
+                                    move = movementEnum.Left;
+                                }
+                                else if (targetTile.getY() > y)
+                                {
+                                    m = 2;
+                                    move = movementEnum.Right;
+                                }
+                                else if (targetTile.getX() < x)
+                                {
+                                    m = 0;
+                                    move = movementEnum.Up;
+                                }
+                                else if (targetTile.getX() > x)
+                                {
+                                    m = 1;
+                                    move = movementEnum.Down;
+                                }
+                                break;
+                        }
+                        if ((move != movementEnum.None) && ((visionTiles[m] is EmptyTile) || (visionTiles[m] is Item)))
+                        {
+                            return move;
+                        }
+                        if (num == 0)
+                        {
+                            num = 1;
+                        }
+                        else
+                        {
+                            num = 0;
+                        }
+                    }
+
+                }
                 if (distY < distX)
                 {
                     if (targetTile.getX() == x)
@@ -447,12 +542,12 @@ namespace GADE6122
                     }
                     else if (targetTile.getY() < y)
                     {
-                        m = 2;
+                        m = 3;
                         move = movementEnum.Left;
                     }
                     else
                     {
-                        m = 3;
+                        m = 2;
                         move = movementEnum.Right;
                     }
 
@@ -461,101 +556,7 @@ namespace GADE6122
                         return move;
                     }
                 }
-                if (distY == distX)
-                {
-                    Random rand = new Random();
-                    int num = rand.Next(2);
-                    for (int i = 0; i < 2; i++)
-                    {
-                        switch (num)
-                        {
-                            case 0:
-                                if (targetTile.getX() == x)
-                                {
-                                    if (targetTile.getY() > y)
-                                    {
-                                        m = 2;
-                                        move = movementEnum.Left;
-                                    }
-                                    else
-                                    {
-                                        m = 3;
-                                        move = movementEnum.Right;
-                                    }
-                                }
-                                else if (targetTile.getX() > x)
-                                {
-                                    m = 0;
-                                    move = movementEnum.Up;
-                                }
-                                else if (targetTile.getX() < x)
-                                {
-                                    m = 1;
-                                    move = movementEnum.Down;
-                                }
-                                else if (targetTile.getY() > y)
-                                {
-                                    m = 2;
-                                    move = movementEnum.Left;
-                                }
-                                else
-                                {
-                                    m = 3;
-                                    move = movementEnum.Right;
-                                }
-                                break;
-
-                            case 1:
-                                if (targetTile.getY() == y)
-                                {
-                                    if (targetTile.getX() > x)
-                                    {
-                                        m = 0;
-                                        move = movementEnum.Up;
-                                    }
-                                    else
-                                    {
-                                        m = 1;
-                                        move = movementEnum.Down;
-                                    }
-                                }
-                                else if (targetTile.getY() > y)
-                                {
-                                    m = 2;
-                                    move = movementEnum.Left;
-                                }
-                                else if (targetTile.getY() < y)
-                                {
-                                    m = 3;
-                                    move = movementEnum.Right;
-                                }
-                                else if (targetTile.getX() > x)
-                                {
-                                    m = 0;
-                                    move = movementEnum.Up;
-                                }
-                                else if (targetTile.getX() < x)
-                                {
-                                    m = 1;
-                                    move = movementEnum.Down;
-                                }
-                                break;
-                        }
-                        if ((move != movementEnum.None) && ((visionTiles[m] is EmptyTile) || (visionTiles[m] is Item)))
-                        {
-                            return move;
-                        }
-                        if (num == 0)
-                        {
-                            num = 1;
-                        }
-                        else
-                        {
-                            num = 0;
-                        }
-                    }
-                    
-                }
+                
            
                 int direct = randNum.Next(4);
 
