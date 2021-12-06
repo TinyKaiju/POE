@@ -60,6 +60,7 @@ namespace GADE6122
         //Question 2.2
         public abstract class Character : Tile
         {
+            protected Tile targetTile;
             protected int hp;
             protected int maxHp;
             protected int damage;
@@ -235,9 +236,9 @@ namespace GADE6122
                     {
                         swap = "Swap " + this.currentWeapon.ToString() + " for enemy's " + target.currentWeapon.ToString();
                     }
-   
+
                     var flag = MessageBox.Show(swap, "Switch Weapons?", MessageBoxButtons.YesNo);
-                   
+
                     if (flag == DialogResult.Yes)
                     {
                         this.Pickup(target.currentWeapon);
@@ -245,6 +246,7 @@ namespace GADE6122
 
                 }
             }
+            public virtual void setTarget(int x, int y){}
         }
 
         //Question 2.4
@@ -364,7 +366,11 @@ namespace GADE6122
 
         public class Leader : Enemy
         {
-            private Tile targetTile = new EmptyTile(0, 0);
+          
+            public override void setTarget(int targetX, int targetY)
+            {
+                targetTile = new EmptyTile(targetX, targetY);
+            }
             public Leader(int x, int y) : base(x, y, 2, 20, 'L')//Constructor
             {
                 this.visionTiles = new Tile[4];
@@ -374,6 +380,9 @@ namespace GADE6122
             public override movementEnum ReturnMove(movementEnum move) // Change to new Method
             {
                 int possible = 4;
+                
+                move = movementEnum.None;
+
                 for (int i = 0; i < 4; i++)
                 {
                     if (visionTiles[i] is not EmptyTile)
@@ -391,12 +400,166 @@ namespace GADE6122
 
                 if (possible <= 0)
                 {
-                    return movementEnum.None;
+                    return move;
                 }
-                move = movementEnum.Up;
+
+                int m = 0;
+                Tile temp = new Obstacle(0, 0);
+                int distY = y - targetTile.getY();
+                int distX = x - targetTile.getX();
+
+                if (targetTile.getY() > y)
+                {
+                    distY = targetTile.getY() - y;
+                }
+                if (targetTile.getX() > x)
+                {
+                    distX = targetTile.getX() - x;
+                }
+
+                if (distY < distX)
+                {
+                    if (targetTile.getX() == x)
+                    {
+                        move = movementEnum.None;
+                    }
+                    else if (targetTile.getX() < x)
+                    {
+                        m = 0;
+                        move = movementEnum.Up;
+                    }
+                    else
+                    {
+                        m = 1;
+                        move = movementEnum.Down;
+                    }
+                 
+                    if ((move != movementEnum.None)&& ((visionTiles[m] is EmptyTile) || (visionTiles[m] is Item)))
+                    {
+                        return move;
+                    }
+                }
+                if (distY > distX)
+                {
+                    if (targetTile.getY() == y)
+                    {
+                        move = movementEnum.None;
+                    }
+                    else if (targetTile.getY() < y)
+                    {
+                        m = 2;
+                        move = movementEnum.Left;
+                    }
+                    else
+                    {
+                        m = 3;
+                        move = movementEnum.Right;
+                    }
+
+                    if ((move != movementEnum.None) && ((visionTiles[m] is EmptyTile) || (visionTiles[m] is Item)))
+                    {
+                        return move;
+                    }
+                }
+                if (distY == distX)
+                {
+                    Random rand = new Random();
+                    int num = rand.Next(2);
+                    for (int i = 0; i < 2; i++)
+                    {
+                        switch (num)
+                        {
+                            case 0:
+                                if (targetTile.getX() == x)
+                                {
+                                    if (targetTile.getY() > y)
+                                    {
+                                        m = 2;
+                                        move = movementEnum.Left;
+                                    }
+                                    else
+                                    {
+                                        m = 3;
+                                        move = movementEnum.Right;
+                                    }
+                                }
+                                else if (targetTile.getX() > x)
+                                {
+                                    m = 0;
+                                    move = movementEnum.Up;
+                                }
+                                else if (targetTile.getX() < x)
+                                {
+                                    m = 1;
+                                    move = movementEnum.Down;
+                                }
+                                else if (targetTile.getY() > y)
+                                {
+                                    m = 2;
+                                    move = movementEnum.Left;
+                                }
+                                else
+                                {
+                                    m = 3;
+                                    move = movementEnum.Right;
+                                }
+                                break;
+
+                            case 1:
+                                if (targetTile.getY() == y)
+                                {
+                                    if (targetTile.getX() > x)
+                                    {
+                                        m = 0;
+                                        move = movementEnum.Up;
+                                    }
+                                    else
+                                    {
+                                        m = 1;
+                                        move = movementEnum.Down;
+                                    }
+                                }
+                                else if (targetTile.getY() > y)
+                                {
+                                    m = 2;
+                                    move = movementEnum.Left;
+                                }
+                                else if (targetTile.getY() < y)
+                                {
+                                    m = 3;
+                                    move = movementEnum.Right;
+                                }
+                                else if (targetTile.getX() > x)
+                                {
+                                    m = 0;
+                                    move = movementEnum.Up;
+                                }
+                                else if (targetTile.getX() < x)
+                                {
+                                    m = 1;
+                                    move = movementEnum.Down;
+                                }
+                                break;
+                        }
+                        if ((move != movementEnum.None) && ((visionTiles[m] is EmptyTile) || (visionTiles[m] is Item)))
+                        {
+                            return move;
+                        }
+                        if (num == 0)
+                        {
+                            num = 1;
+                        }
+                        else
+                        {
+                            num = 0;
+                        }
+                    }
+                    
+                }
+           
                 int direct = randNum.Next(4);
 
-                Tile temp = new Obstacle(0, 0);
+                
                 while (!((temp is EmptyTile) || (temp is Item)))
                 {
                     switch (direct)
@@ -640,8 +803,6 @@ namespace GADE6122
             private int mapWidth;
             private int mapHeight;
             private Random randomNum = new Random();
-            private int gold;
-            private Gold[] goldArray;
             private Item[] Items;
 
             
@@ -686,7 +847,14 @@ namespace GADE6122
                 player.setVisionTiles(mapTiles);
                 for (int i = 0; i < enemies.Length; i++)
                 {
-                    enemies[i].setVisionTiles(mapTiles);
+                    if (enemies[i] is Leader)
+                    {
+                        //Leader tempEnem = (Leader)enemies[i];
+                        enemies[i].setTarget(player.getX(), player.getY());
+                        //mapTiles[tempEnem.getX(), tempEnem.getY()] = tempEnem;
+                        //enemies[i] = tempEnem;
+                    }
+                    enemies[i].setVisionTiles(mapTiles); 
                 }
             }
 
@@ -875,7 +1043,6 @@ namespace GADE6122
                             victim.damaged(attacker.getDamage());
                             if (victim.isDead())
                             {
-                                MessageBox.Show("jjd");
                                 removeEnemy(victim);
                                 attacker.Loot(victim);
                                 mapTiles[victim.getX(), victim.getY()] = new EmptyTile(victim.getX(), victim.getY());
