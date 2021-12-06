@@ -336,7 +336,7 @@ namespace GADE6122
             this.Controls.Add(this.lblOutput);
             this.Controls.Add(this.button1);
             this.Name = "Form1";
-            this.Text = "Form1";
+            this.Text = "HERO GAME";
             this.Load += new System.EventHandler(this.Form1_Load);
             this.panel1.ResumeLayout(false);
             this.panel1.PerformLayout();

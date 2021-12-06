@@ -11,6 +11,8 @@ using System.Globalization;
 using System.Security;
 using System.Runtime.InteropServices;
 using System.Collections;
+using System.IO;
+using System.Runtime.Serialization.Formatters.Binary;
 
 namespace GADE6122
 {
@@ -60,6 +62,7 @@ namespace GADE6122
         //Question 2.2
         public abstract class Character : Tile
         {
+            public bool newItem = false;
             protected Tile targetTile;
             protected int hp;
             protected int maxHp;
@@ -193,11 +196,13 @@ namespace GADE6122
                     Gold goldnum;
                     goldnum = (Gold)i;
                     this.goldpurse += goldnum.getGoldAmount();
+                    this.newItem = true;
                 }
 
                 if (i is Weapon)
                 {
                     Equip((Weapon)i);
+                    this.newItem = true;
                 }
 
             }
@@ -236,7 +241,7 @@ namespace GADE6122
                     }
                 }
             }
-            public virtual void setTarget(int x, int y){}
+            public virtual void setTarget(int x, int y) { }
         }
 
         //Question 2.4
@@ -244,6 +249,7 @@ namespace GADE6122
         {
             protected Random randNum = new Random();
             protected bool friendlyFire = false;
+            
             public Enemy(int x, int y, int Damage, int Maxhp, char Symbol) : base(x, y, Symbol) //Constructor
             {
                 this.damage = Damage;
@@ -259,6 +265,10 @@ namespace GADE6122
             public override string ToString()
             {
                 return "Goblin at [" + x + "," + y + "] (" + damage + ")"; // double check 
+            }
+            public bool newPick() 
+            {
+                return newItem;
             }
         }
 
@@ -278,11 +288,11 @@ namespace GADE6122
                 {
                     if (visionTiles[i] is not EmptyTile)
                     {
-                        if(visionTiles[i] is not Item)
+                        if (visionTiles[i] is not Item)
                         {
                             possible--;
                         }
-                        if(visionTiles[i] is Hero)
+                        if (visionTiles[i] is Hero)
                         {
                             possible = 0;
                         }
@@ -356,7 +366,7 @@ namespace GADE6122
 
         public class Leader : Enemy
         {
-          
+
             public override void setTarget(int targetX, int targetY)
             {
                 targetTile = new EmptyTile(targetX, targetY);
@@ -370,7 +380,7 @@ namespace GADE6122
             public override movementEnum ReturnMove(movementEnum move) // Change to new Method
             {
                 int possible = 4;
-                
+
                 move = movementEnum.None;
 
                 for (int i = 0; i < 4; i++)
@@ -518,8 +528,8 @@ namespace GADE6122
                         m = 1;
                         move = movementEnum.Down;
                     }
-                 
-                    if ((move != movementEnum.None)&& ((visionTiles[m] is EmptyTile) || (visionTiles[m] is Item)))
+
+                    if ((move != movementEnum.None) && ((visionTiles[m] is EmptyTile) || (visionTiles[m] is Item)))
                     {
                         return move;
                     }
@@ -546,11 +556,11 @@ namespace GADE6122
                         return move;
                     }
                 }
-                
-           
+
+
                 int direct = randNum.Next(4);
 
-                
+
                 while (!((temp is EmptyTile) || (temp is Item)))
                 {
                     switch (direct)
@@ -609,7 +619,7 @@ namespace GADE6122
 
                 }
                 weapon = currentWeapon.ToString();
-                return ("Player Stats:\n |HP: " + hp + "/" + maxHp + "\n |Current Weapon: " + weapon + "\n |Weapon Range: " + Convert.ToString(currentWeapon.GetRange())+ "\n |Weapon Damage: " + damage + "\n |Gold: " + goldpurse + "\n [" + getX() + "," + getY() + "]");
+                return ("Player Stats:\n |HP: " + hp + "/" + maxHp + "\n |Current Weapon: " + weapon + "\n |Weapon Range: " + Convert.ToString(currentWeapon.GetRange()) + "\n |Weapon Damage: " + damage + "\n |Gold: " + goldpurse + "\n [" + getX() + "," + getY() + "]");
             }
 
             public override bool CheckRange(Character target)
@@ -710,6 +720,7 @@ namespace GADE6122
             {
                 get { return WeaponName; }
             }
+            
             public override string ToString()
             {
                 return "";
@@ -719,7 +730,7 @@ namespace GADE6122
         public class MeleeWeapon : Weapon
         {
             public enum Types { Dagger, Longsword }
-            public Types meleeWeapons;            
+            public Types meleeWeapons;
             public override int GetRange()
             {
                 return 1;
@@ -748,7 +759,7 @@ namespace GADE6122
             }
             public override string ToString()
             { return WeaponName; }
-          
+
         }
         //Question 2.2.3
         public class RangeWeapon : Weapon
@@ -761,7 +772,7 @@ namespace GADE6122
             }
             public RangeWeapon(int x, int y, Types weapon) : base(x, y)
             {
-                
+
                 switch (weapon)
                 {
                     case Types.Rifle:
@@ -795,11 +806,14 @@ namespace GADE6122
             private int mapHeight;
             private Random randomNum = new Random();
             private Item[] Items;
+            public string battleBLog = "";
+            public int wepnum;
 
-            
+
             public Map(int wMin, int wMax, int hMin, int hMax, int enemyNum, int goldNum, int weaponNum)
             {
-                Items = new Item[weaponNum + goldNum]; 
+                wepnum = randomNum.Next(weaponNum+1);
+                Items = new Item[wepnum + goldNum];
 
                 mapWidth = randomNum.Next(wMin, wMax) + 2;
                 mapHeight = randomNum.Next(hMin, hMax) + 2;
@@ -817,14 +831,14 @@ namespace GADE6122
                     enemies[i] = (Enemy)Create(Tile.tiletype.Enemy);
                     mapTiles[enemies[i].getX(), enemies[i].getY()] = enemies[i];
                 }
-                
+
                 for (int i = 0; i < goldNum; i++)
                 {
                     Items[i] = (Gold)Create(Tile.tiletype.Gold);
                     mapTiles[Items[i].getX(), Items[i].getY()] = Items[i];
                 }
 
-                for (int i = goldNum; i < (weaponNum + goldNum); i++)
+                for (int i = goldNum; i < (wepnum + goldNum); i++)
                 {
                     Items[i] = (Weapon)Create(Tile.tiletype.Weapon);
                     mapTiles[Items[i].getX(), Items[i].getY()] = Items[i];
@@ -845,7 +859,7 @@ namespace GADE6122
                         //mapTiles[tempEnem.getX(), tempEnem.getY()] = tempEnem;
                         //enemies[i] = tempEnem;
                     }
-                    enemies[i].setVisionTiles(mapTiles); 
+                    enemies[i].setVisionTiles(mapTiles);
                 }
             }
 
@@ -879,16 +893,16 @@ namespace GADE6122
                         int randW = randomNum.Next(4);
                         switch (randW) // Randomise enemy type
                         {
-                            case 0: return new MeleeWeapon(uniqueX, uniqueY,MeleeWeapon.Types.Dagger);
+                            case 0: return new MeleeWeapon(uniqueX, uniqueY, MeleeWeapon.Types.Dagger);
                             case 1: return new MeleeWeapon(uniqueX, uniqueY, MeleeWeapon.Types.Longsword);
                             case 2: return new RangeWeapon(uniqueX, uniqueY, RangeWeapon.Types.Rifle);
                             case 3: return new RangeWeapon(uniqueX, uniqueY, RangeWeapon.Types.Longbow);
                             default: return new EmptyTile(uniqueX, uniqueY);
                         }
                     default: return new EmptyTile(uniqueX, uniqueY);
-                        
+
                 }
-                
+
 
             }
 
@@ -963,7 +977,7 @@ namespace GADE6122
                 int oldX = getPlayerX();
                 int oldY = getPlayerY();
                 player.Move(move);
-                
+
                 mapTiles[oldX, oldY] = new EmptyTile(oldX, oldY);
                 mapTiles[getPlayerX(), getPlayerY()] = player;
 
@@ -1037,7 +1051,7 @@ namespace GADE6122
                                 removeEnemy(victim);
                                 attacker.Loot(victim);
                                 mapTiles[victim.getX(), victim.getY()] = new EmptyTile(victim.getX(), victim.getY());
-                                
+
                             }
                         }
                         else if (attacker.getVisionTile(i) is Hero)
@@ -1068,6 +1082,25 @@ namespace GADE6122
                     enemies[i] = temp[i];
                 }
             }
+            public void removeItem(Item target) // Removes enemy from array and resizes it
+            {
+                int j = 0;
+                Item[] temp = new Item[Items.Length - 1];
+
+                for (int i = 0; i < Items.Length; i++)
+                {
+                    if ((Items[i] != target) && (j < temp.Length))
+                    {
+                        temp[j] = Items[i];
+                        j++;
+                    }
+                }
+                Items = new Item[temp.Length];
+                for (int i = 0; i < temp.Length; i++)
+                {
+                    Items[i] = temp[i];
+                }
+            }
 
             public virtual string getPlayerInfo()
             {
@@ -1094,20 +1127,31 @@ namespace GADE6122
                 {
                     int oldX = enemies[i].getX();
                     int oldY = enemies[i].getY();
+
                     enemies[i].Move(enemies[i].ReturnMove(0));
-                    if(getItemAtPosition(enemies[i].getX(), enemies[i].getY()) != null)
+                    Item j = getItemAtPosition(enemies[i].getX(), enemies[i].getY());
+                    if (j is Item)
                     {
                         enemies[i].Pickup(getItemAtPosition(enemies[i].getX(), enemies[i].getY()));
+                        if (Items.Contains(j))
+                        {
+                            battleBLog = enemies[i].ToString() + " picked up " + j.ToString() + "\n";
+                            enemies[i].newItem = false;
+                        }
+                        removeItem(j);
                     }
                     mapTiles[oldX, oldY] = new EmptyTile(oldX, oldY);
                     mapTiles[enemies[i].getX(), enemies[i].getY()] = enemies[i];
                     UpdateVision();
                 }
             }
-
+            public string getBlog()
+            {
+                return battleBLog;
+            }
             public Item getItemAtPosition(int x, int y)
             {
-                if (mapTiles[x, y] is Item)
+                if ((mapTiles[x, y] is not Character) && (mapTiles[x, y] is not EmptyTile) && (mapTiles[x, y] is not Obstacle))
                 {
                     return (Item)mapTiles[x, y];
                 }
@@ -1121,6 +1165,7 @@ namespace GADE6122
 
 
         //Question 3.3
+        [Serializable]
         public class Shop
         {
             private Weapon[] weaponArray = new Weapon[3];
@@ -1153,7 +1198,7 @@ namespace GADE6122
             public bool CanBuy(int num)
             {
                 if (buyer.getGold() >= weaponArray[num].GetCost)
-                {   
+                {
                     return true;
                 }
                 else
@@ -1178,6 +1223,7 @@ namespace GADE6122
                 output += weaponArray[num].GetWeaponName + " Cost:" + weaponArray[num].GetCost;
                 return output;
             }
+
         }
         [Serializable]
         public class GameEngine
@@ -1194,18 +1240,34 @@ namespace GADE6122
             public GameEngine(int widthMin, int widthMax, int heightMin, int heightMax, int enemyNum, int goldNum, int weaponNum) // constructor
             {
                 map = new Map(widthMin, widthMax, heightMin, heightMax, enemyNum, goldNum, weaponNum);
-                shop = new Shop((Character)map.getMapTiles(map.getPlayerX(),map.getPlayerY()));
+                shop = new Shop((Character)map.getMapTiles(map.getPlayerX(), map.getPlayerY()));
             }
 
             public void EndGAME()
             {
                 Hero temp = (Hero)map.getMapTiles(map.getPlayerX(), map.getPlayerY());
-                if (temp.isDead())
+                if (map.getEnemyarraySize() == 0)
                 {
-                    var again = MessageBox.Show("PLAY AGAIN", "YOU DIED", MessageBoxButtons.YesNo);
+                    var again = MessageBox.Show("\tYOU WIN!!!\n\tPLAY AGAIN", "Congratulations", MessageBoxButtons.YesNo);
                     if (again == DialogResult.No)
                     {
                         Application.Exit();
+                    }
+                    else
+                    {
+                        Application.Restart();
+                    }
+                }
+                if (temp.isDead())
+                {
+                    var again = MessageBox.Show("\tPLAY AGAIN", "YOU DIED", MessageBoxButtons.YesNo);
+                    if (again == DialogResult.No)
+                    {
+                        Application.Exit();
+                    }
+                    else
+                    {
+                        Application.Restart();
                     }
                 }
             }
@@ -1294,7 +1356,7 @@ namespace GADE6122
                             {
                                 RangeWeapon temp = (RangeWeapon)map.getMapTiles(x, y);
                                 output += temp.GetWeaponSymbol;
-                            }                           
+                            }
                         }
                         if (map.getMapTiles(x, y) is Character)
                         {
@@ -1345,53 +1407,61 @@ namespace GADE6122
                 map = loadedMap;
             }
 
+            public string getLog()
+            {
+                return map.getBlog();
+            }
+
         }
 
-        //[Serializable]
-        //public class SaveLoad
-        //{
-        //    public string savefilename = "data.KaijuAndBees";
-        //    private Map saver;
-        //    public BinaryFormatter formatter = new BinaryFormatter();
-        //    public void Save(Map map)
-        //    {
-        //        saver = map;
+        class DataSerializer
+        {
+            public void BinarySerialize(object data, string path)
+            {
+                FileStream fileStream;
+                BinaryFormatter bf = new BinaryFormatter();
+                if (File.Exists(path)) File.Delete(path);
+                fileStream = File.Create(path);
+#pragma warning disable SYSLIB0011 // Type or member is obsolete
+                bf.Serialize(fileStream, data);
+#pragma warning restore SYSLIB0011 // Type or member is obsolete
+                fileStream.Close();
+            }
+            public object BinaryDeserialize(string path)
+            {
+                object obj = null;
 
-        //        var file = new FileStream(savefilename, FileMode.OpenOrCreate, FileAccess.ReadWrite);
-        //        formatter.Serialize(file, saver);
-        //        file.Close();
-        //    }
-
-        //    public Map Load()
-        //    {
-        //        var file = new FileStream(savefilename, FileMode.Open, FileAccess.Read);
-        //        if (file != null)
-        //        {
-        //            //if it does not open and read the file 
-        //            saver = (Map)formatter.Deserialize(file);
-        //            file.Close();
-        //            return saver;
-        //        }
-        //        else
-        //        {
-        //            return null;
-        //        }
-
-        //    }
-        //}
+                FileStream fileStream;
+                BinaryFormatter bf = new BinaryFormatter();
+                if (File.Exists(path))
+                {
+                    fileStream = File.OpenRead(path);
+#pragma warning disable SYSLIB0011 // Type or member is obsolete
+                    obj = bf.Deserialize(fileStream);
+#pragma warning restore SYSLIB0011 // Type or member is obsolete
+                    fileStream.Close();
+                }
+                return obj;
+            }
+        }
+       
 
         GameEngine game;
+        string battleLog = "";
         public Form1()
         {
             InitializeComponent();
-            game = new GameEngine(10, 20, 10, 20, 5, 5, 5);           
+            StartGame();           
             updateForm();
         }
 
         private void button1_Click(object sender, EventArgs e)
         {
-            //SaveLoad loader = new SaveLoad();
-            //game.setMap(loader.Load());
+            string path = "data.KaijuAndBees";
+            DataSerializer dataSerializer = new DataSerializer();
+            GameEngine g = null;
+            g = dataSerializer.BinaryDeserialize(path) as GameEngine;
+            game = g;
         }
 
         private void Form1_Load(object sender, EventArgs e)
@@ -1471,11 +1541,15 @@ namespace GADE6122
             updateAttackList();
             updateEnemy();
             displayshop();
-
+            battleLog += game.getLog();
+            richTextBox1.Text = battleLog;
             btnBuy.Text = "-- Buy --";
             lblOutput.Text = "";
         }
-
+        public void StartGame()
+        {
+            game = new GameEngine(10, 20, 10, 20, 5, 5, 5);
+        }
         private void BtnAttack_Click(object sender, EventArgs e)
         {
 
@@ -1494,7 +1568,7 @@ namespace GADE6122
             else
             {
                 lblOutput.Text = "No Targets Available";
-                richTextBox1.Text += "No Targets Available\n";
+                MemoEnemyInfo.Text += "No Targets Available\n";
             }
             game.EndGAME();
         }
@@ -1517,8 +1591,9 @@ namespace GADE6122
 
         private void button2_Click_1(object sender, EventArgs e)
         {
-            //SaveLoad saver = new SaveLoad();
-            //saver.Save(game.getMap());
+            string path = "data.KaijuAndBees";
+            DataSerializer dataSerializer = new DataSerializer();
+            dataSerializer.BinarySerialize(game, path);
         }
 
         private void MemoPlayerInfo_TextChanged(object sender, EventArgs e)
