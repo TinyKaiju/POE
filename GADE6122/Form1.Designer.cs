@@ -319,7 +319,7 @@ namespace GADE6122
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1263, 624);
+            this.ClientSize = new System.Drawing.Size(1005, 624);
             this.Controls.Add(this.button2);
             this.Controls.Add(this.rtbMap);
             this.Controls.Add(this.btnRight);

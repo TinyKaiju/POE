@@ -224,7 +224,7 @@ namespace GADE6122
             public void Loot(Character target)
             {
                 this.goldpurse += target.getGold();
-                if ((target.currentWeapon != null))
+                if ((target.currentWeapon != null) && (this is not Mage))
                 {
                     string swap;
                     if (this.currentWeapon == null)
@@ -875,13 +875,18 @@ namespace GADE6122
                             victim.damaged(attacker.getDamage());
                             if (victim.isDead())
                             {
-                               // removeEnemy(victim);
+                                MessageBox.Show("jjd");
+                                removeEnemy(victim);
+                                attacker.Loot(victim);
+                                mapTiles[victim.getX(), victim.getY()] = new EmptyTile(victim.getX(), victim.getY());
+                                
                             }
                         }
                         else if (attacker.getVisionTile(i) is Hero)
                         {
                             player.damaged(attacker.getDamage());
                         }
+                        UpdateVision();
                     }
 
                 }
@@ -893,7 +898,7 @@ namespace GADE6122
 
                 for (int i = 0; i < enemies.Length; i++)
                 {
-                    if (enemies[i] != target)
+                    if ((enemies[i] != target) && (j < temp.Length))
                     {
                         temp[j] = enemies[i];
                         j++;
@@ -1146,7 +1151,6 @@ namespace GADE6122
             public string tryAttack(Enemy target)
             {
                 return map.tryAttack(target);
-                //map.tryEnemyAttack();
             }
 
             public void EnemiesAtk()
@@ -1258,10 +1262,6 @@ namespace GADE6122
             checkedListBox1.Items.Add(game.shop.GetWeapons(0).ToString());                     
             checkedListBox1.Items.Add(game.shop.GetWeapons(1).ToString());
             checkedListBox1.Items.Add(game.shop.GetWeapons(2).ToString());
-
-                
-            
-
         }
 
 
@@ -1370,14 +1370,18 @@ namespace GADE6122
             for (int i= 0; i < checkedListBox1.Items.Count; i++)
                 if (i != e.Index )
                     checkedListBox1.SetItemChecked(i, false);
-            
+
             if (game.shop.CanBuy(checkedListBox1.SelectedIndex))
             {
-                
+
                 btnBuy.Enabled = true;
+                btnBuy.Text = "Buy";
             }
             else
+            {
                 btnBuy.Enabled = false;
+                btnBuy.Text = "Not enough Gold";
+            }
         }
 
         private void btnBuy_Click(object sender, EventArgs e)
