@@ -81,6 +81,7 @@ namespace GADE6122
             this.MemoPlayerInfo.Font = new System.Drawing.Font("Segoe UI", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
             this.MemoPlayerInfo.Location = new System.Drawing.Point(443, 12);
             this.MemoPlayerInfo.Name = "MemoPlayerInfo";
+            this.MemoPlayerInfo.ReadOnly = true;
             this.MemoPlayerInfo.Size = new System.Drawing.Size(268, 172);
             this.MemoPlayerInfo.TabIndex = 2;
             this.MemoPlayerInfo.Text = "";
@@ -129,6 +130,7 @@ namespace GADE6122
             this.MemoEnemyInfo.BorderStyle = System.Windows.Forms.BorderStyle.None;
             this.MemoEnemyInfo.Location = new System.Drawing.Point(13, 61);
             this.MemoEnemyInfo.Name = "MemoEnemyInfo";
+            this.MemoEnemyInfo.ReadOnly = true;
             this.MemoEnemyInfo.ScrollBars = System.Windows.Forms.RichTextBoxScrollBars.None;
             this.MemoEnemyInfo.Size = new System.Drawing.Size(239, 105);
             this.MemoEnemyInfo.TabIndex = 4;
@@ -218,6 +220,7 @@ namespace GADE6122
             this.rtbMap.Font = new System.Drawing.Font("Courier New", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
             this.rtbMap.Location = new System.Drawing.Point(21, 12);
             this.rtbMap.Name = "rtbMap";
+            this.rtbMap.ReadOnly = true;
             this.rtbMap.ScrollBars = System.Windows.Forms.RichTextBoxScrollBars.None;
             this.rtbMap.Size = new System.Drawing.Size(406, 440);
             this.rtbMap.TabIndex = 8;
@@ -279,6 +282,7 @@ namespace GADE6122
             this.richTextBox3.Font = new System.Drawing.Font("Segoe UI", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
             this.richTextBox3.Location = new System.Drawing.Point(12, 249);
             this.richTextBox3.Name = "richTextBox3";
+            this.richTextBox3.ReadOnly = true;
             this.richTextBox3.Size = new System.Drawing.Size(239, 321);
             this.richTextBox3.TabIndex = 10;
             this.richTextBox3.Text = resources.GetString("richTextBox3.Text");

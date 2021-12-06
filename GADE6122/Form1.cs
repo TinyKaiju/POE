@@ -1182,6 +1182,12 @@ namespace GADE6122
                 return (weaponArray[num]);
             }
 
+            public string DisplayWeapon(int num)
+            {
+                string output = "";
+                output += weaponArray[num].GetWeaponName + " Cost:" + weaponArray[num].GetCost;
+                return output;
+            }
         }
         public class GameEngine
         {
@@ -1427,9 +1433,10 @@ namespace GADE6122
         public void displayshop()
         {
             checkedListBox1.Items.Clear();
-            checkedListBox1.Items.Add(game.shop.GetWeapons(0).ToString());                     
-            checkedListBox1.Items.Add(game.shop.GetWeapons(1).ToString());
-            checkedListBox1.Items.Add(game.shop.GetWeapons(2).ToString());
+            for (int i = 0; i < 3; i++)
+            {
+                checkedListBox1.Items.Add(game.shop.DisplayWeapon(i));
+            }
         }
 
 
@@ -1458,6 +1465,7 @@ namespace GADE6122
             updateEnemy();
             displayshop();
 
+            btnBuy.Text = "-- Buy --";
             lblOutput.Text = "";
         }
 
@@ -1543,7 +1551,7 @@ namespace GADE6122
             {
 
                 btnBuy.Enabled = true;
-                btnBuy.Text = "Buy";
+                btnBuy.Text = "-- Buy --";
             }
             else
             {
