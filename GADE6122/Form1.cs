@@ -62,7 +62,6 @@ namespace GADE6122
         //Question 2.2
         public abstract class Character : Tile
         {
-            public bool newItem = false;
             protected Tile targetTile;
             protected int hp;
             protected int maxHp;
@@ -196,13 +195,11 @@ namespace GADE6122
                     Gold goldnum;
                     goldnum = (Gold)i;
                     this.goldpurse += goldnum.getGoldAmount();
-                    this.newItem = true;
                 }
 
                 if (i is Weapon)
                 {
                     Equip((Weapon)i);
-                    this.newItem = true;
                 }
 
             }
@@ -265,10 +262,6 @@ namespace GADE6122
             public override string ToString()
             {
                 return "Goblin at [" + x + "," + y + "] (" + damage + ")"; // double check 
-            }
-            public bool newPick() 
-            {
-                return newItem;
             }
         }
 
@@ -1046,16 +1039,19 @@ namespace GADE6122
                             Tile temp = attacker.getVisionTile(i);
                             Enemy victim = (Enemy)mapTiles[temp.getX(), temp.getY()];
                             victim.damaged(attacker.getDamage());
+                            battleBLog += attacker.ToString() + " attacked " + victim.ToString();
                             if (victim.isDead())
                             {
                                 removeEnemy(victim);
                                 attacker.Loot(victim);
                                 mapTiles[victim.getX(), victim.getY()] = new EmptyTile(victim.getX(), victim.getY());
+                                battleBLog += attacker.ToString() + " Killed " + victim.ToString();
 
                             }
                         }
                         else if (attacker.getVisionTile(i) is Hero)
                         {
+                            battleBLog += attacker.ToString() + " attacked YOU\n";
                             player.damaged(attacker.getDamage());
                         }
                         UpdateVision();
@@ -1135,8 +1131,7 @@ namespace GADE6122
                         enemies[i].Pickup(getItemAtPosition(enemies[i].getX(), enemies[i].getY()));
                         if (Items.Contains(j))
                         {
-                            battleBLog = enemies[i].ToString() + " picked up " + j.ToString() + "\n";
-                            enemies[i].newItem = false;
+                            battleBLog += enemies[i].ToString() + " picked up " + j.ToString() + "\n";
                         }
                         removeItem(j);
                     }
@@ -1147,7 +1142,9 @@ namespace GADE6122
             }
             public string getBlog()
             {
-                return battleBLog;
+                string output = battleBLog;
+                battleBLog = "";
+                return output;
             }
             public Item getItemAtPosition(int x, int y)
             {
