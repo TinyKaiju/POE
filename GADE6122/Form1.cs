@@ -197,8 +197,7 @@ namespace GADE6122
 
                 if (i is Weapon)
                 {
-                    this.currentWeapon = (Weapon)i;
-                    this.updateReach();
+                    Equip((Weapon)i);
                 }
 
             }
@@ -216,10 +215,11 @@ namespace GADE6122
                 this.goldpurse -= cost;
             }
 
-            protected void updateReach()
+            private void Equip(Weapon w)
             {
-                this.reach = this.currentWeapon.GetRange();
-                this.damage = this.currentWeapon.GetDamage;
+                this.currentWeapon = w;
+                this.reach = w.GetRange();
+                this.damage = w.GetDamage;
             }
 
             public void Loot(Character target)
@@ -231,19 +231,9 @@ namespace GADE6122
                     if (this.currentWeapon == null)
                     {
                         swap = "Swap Bare Hands for enemy's " + target.currentWeapon.ToString();
-                    }
-                    else
-                    {
-                        swap = "Swap " + this.currentWeapon.ToString() + " for enemy's " + target.currentWeapon.ToString();
-                    }
-
-                    var flag = MessageBox.Show(swap, "Switch Weapons?", MessageBoxButtons.YesNo);
-
-                    if (flag == DialogResult.Yes)
-                    {
+                        MessageBox.Show(swap, "Looting Enemy");
                         this.Pickup(target.currentWeapon);
                     }
-
                 }
             }
             public virtual void setTarget(int x, int y){}
@@ -1189,6 +1179,7 @@ namespace GADE6122
                 return output;
             }
         }
+        [Serializable]
         public class GameEngine
         {
             private const char emptyChar = ' ';
@@ -1204,8 +1195,20 @@ namespace GADE6122
             {
                 map = new Map(widthMin, widthMax, heightMin, heightMax, enemyNum, goldNum, weaponNum);
                 shop = new Shop((Character)map.getMapTiles(map.getPlayerX(),map.getPlayerY()));
-        }
+            }
 
+            public void EndGAME()
+            {
+                Hero temp = (Hero)map.getMapTiles(map.getPlayerX(), map.getPlayerY());
+                if (temp.isDead())
+                {
+                    var again = MessageBox.Show("PLAY AGAIN", "YOU DIED", MessageBoxButtons.YesNo);
+                    if (again == DialogResult.No)
+                    {
+                        Application.Exit();
+                    }
+                }
+            }
             public bool MovePlayer(Character.movementEnum moveType)
             {
                 int x, y;
@@ -1410,6 +1413,7 @@ namespace GADE6122
         {
             game.MovePlayer(Character.movementEnum.Up);
             updateForm();
+            game.EndGAME();
 
         }
 
@@ -1417,18 +1421,21 @@ namespace GADE6122
         {
             game.MovePlayer(Character.movementEnum.Down);
             updateForm();
+            game.EndGAME();
         }
 
         private void btnLeft_Click(object sender, EventArgs e)
         {
             game.MovePlayer(Character.movementEnum.Left);
             updateForm();
+            game.EndGAME();
         }
 
         private void btnRight_Click(object sender, EventArgs e)
         {
             game.MovePlayer(Character.movementEnum.Right);
             updateForm();
+            game.EndGAME();
         }
         public void displayshop()
         {
@@ -1489,6 +1496,7 @@ namespace GADE6122
                 lblOutput.Text = "No Targets Available";
                 richTextBox1.Text += "No Targets Available\n";
             }
+            game.EndGAME();
         }
 
         private void CmbEnemyList_SelectedIndexChanged(object sender, EventArgs e)
